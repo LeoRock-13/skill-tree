@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claude Manager</title>
+<style>
+:root{
+  --bg:#f7f6f3;--surface:#fff;--fg:#1c1b19;--mut:#6f6c66;--line:#e4e1da;
+  --acc:#c4501b;--acc-soft:#fbeadf;
+  --on:#1e7f3c;--on-soft:#e3f3e8;--man:#9a6200;--man-soft:#fbefd5;--off:#b3261e;--off-soft:#fbe4e2;
+  --radius:10px;--shadow:0 1px 2px rgba(0,0,0,.05)
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141413;--surface:#1d1c1a;--fg:#ece9e2;--mut:#9b978e;--line:#2e2c28;
+  --acc:#ff8a4c;--acc-soft:#33231a;
+  --on:#5bd47a;--on-soft:#15291b;--man:#f0b050;--man-soft:#2c2412;--off:#ff6b61;--off-soft:#331a18}}
+:root[data-theme="dark"]{--bg:#141413;--surface:#1d1c1a;--fg:#ece9e2;--mut:#9b978e;--line:#2e2c28;--acc:#ff8a4c;--acc-soft:#33231a;--on:#5bd47a;--on-soft:#15291b;--man:#f0b050;--man-soft:#2c2412;--off:#ff6b61;--off-soft:#331a18}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:1120px;margin:auto;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+h1{font-size:17px;margin:0;font-weight:700;letter-spacing:-.01em}
+h1 span{color:var(--mut);font-weight:400;font-size:13px;margin-left:6px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav button{border:0;background:none;color:var(--mut);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit;font-weight:600}
+nav button:hover{background:var(--surface)}
+nav button.act{background:var(--fg);color:var(--bg)}
+nav b{font-weight:600;opacity:.6;margin-left:5px;font-size:12px}
+.tools{max-width:1120px;margin:auto;padding:0 16px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=search]{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font:inherit}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px}
+.chip.act{border-color:var(--fg);background:var(--fg);color:var(--bg)}
+main{max-width:1120px;margin:auto;padding:16px 16px 60px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);cursor:pointer;text-align:left;font:inherit;color:inherit}
+.card:hover{border-color:var(--acc)}
+.card .big{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.card .lab{color:var(--mut);font-size:13px}
+.card .sub{margin-top:8px;font-size:12px;color:var(--mut)}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:22px 0 8px}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin:10px 0;box-shadow:var(--shadow);overflow:hidden}
+.group>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.group>summary::-webkit-details-marker{display:none}
+.group>summary::before{content:"▸";color:var(--mut);transition:transform .15s}
+.group[open]>summary::before{transform:rotate(90deg)}
+.gname{font-weight:650;flex:1;min-width:0;word-break:break-word}
+.gname small{display:block;color:var(--mut);font-weight:400;font-size:12px;font-family:ui-monospace,monospace}
+.mini{display:flex;width:120px;height:8px;border-radius:99px;overflow:hidden;background:var(--line);flex:none}
+.mini i{display:block;height:100%}
+.cnt{color:var(--mut);font-size:13px;white-space:nowrap}
+.row{display:grid;grid-template-columns:minmax(140px,240px) 1fr auto;gap:14px;padding:10px 14px;border-top:1px solid var(--line);align-items:center}
+.row:hover{background:var(--bg)}
+.n{font-weight:600;word-break:break-word}
+.d{color:var(--mut);font-size:13px}
+.d code{display:block;margin-top:3px}
+code{font:12px ui-monospace,monospace;color:var(--mut);word-break:break-all}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.seg button{border:0;background:none;padding:5px 10px;font:inherit;font-size:12px;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.s-on.act{background:var(--on-soft);color:var(--on)}
+.seg button.s-man.act{background:var(--man-soft);color:var(--man)}
+.seg button.s-off.act{background:var(--off-soft);color:var(--off)}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px}
+.pill.on{background:var(--on-soft);color:var(--on)}.pill.man{background:var(--man-soft);color:var(--man)}.pill.off{background:var(--off-soft);color:var(--off)}
+.tag{display:inline-block;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 7px;margin:2px 3px 2px 0}
+.switch{position:relative;width:42px;height:24px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:99px;cursor:pointer;transition:.15s}
+.switch span::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.switch input:checked+span{background:var(--on)}.switch input:checked+span::after{transform:translateX(18px)}
+.note{color:var(--mut);font-size:13px;margin-top:16px}
+.empty{padding:30px;text-align:center;color:var(--mut)}
+.banner{background:var(--acc-soft);border:1px solid var(--acc);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;font-size:14px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:.2s}
+.toast.show{opacity:1}
+.planwrap{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;height:calc(100vh - 230px);min-height:420px;background:var(--bg);background-image:radial-gradient(var(--line) 1.2px,transparent 1.2px);background-size:22px 22px;cursor:grab;touch-action:none}
+.plan{position:relative;transform-origin:0 0;display:flex;gap:110px;padding:28px 40px;width:max-content;align-items:flex-start}
+#edges{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.col{display:flex;flex-direction:column;gap:16px;width:280px;position:relative;z-index:1}
+.colh{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:700;padding-left:4px}
+.node{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 24px -12px rgba(0,0,0,.25);border-top:3px solid var(--kc,var(--line))}
+.node[onclick^="focus"]{cursor:pointer}.node:hover{border-color:var(--kc,var(--fg))}
+.k-cfg{--kc:var(--fg)}.k-skill{--kc:var(--on)}.k-plug{--kc:#7c6cf0}.k-mcp{--kc:var(--acc)}.k-dot{--kc:var(--man)}.k-mem{--kc:var(--mut)}.k-ext{--kc:var(--acc)}
+.nh{display:flex;gap:8px;align-items:center;font-weight:650;margin-bottom:2px}
+.ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:var(--bg);color:var(--kc);font-size:13px;flex:none}
+.nt{word-break:break-word}
+.node code{display:block;margin:0 0 8px 32px;font-size:11px}
+.node .mini{width:100%;margin:2px 0 8px}
+.kv{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);padding:2px 0}.kv b{color:var(--fg)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.c{font:12px system-ui;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:2px 7px;cursor:pointer;border-left:3px solid var(--mut)}
+.c.on{border-left-color:var(--on)}.c.man{border-left-color:var(--man)}.c.off{border-left-color:var(--off);color:var(--mut);text-decoration:line-through}.c.mcp{border-left-color:var(--acc)}.c.neu{cursor:default}.c.more{border-left-color:var(--fg);font-weight:600}
+.c:hover{border-color:var(--fg)}
+.zoom{position:absolute;right:12px;top:12px;display:flex;gap:4px;z-index:3}
+.zoom button{width:32px;height:32px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;cursor:pointer;font-size:16px}
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-top:10px;padding:10px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;min-height:56px}
+.tree{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 6px;font-size:14px}
+.tn{margin-left:14px}.tree>.tn{margin-left:0}
+.tl{display:flex;gap:8px;align-items:center;padding:4px 8px;border-radius:6px;cursor:pointer;list-style:none;flex-wrap:wrap}
+.tl::-webkit-details-marker{display:none}.tl:hover{background:var(--bg)}
+.fold{width:12px;color:var(--mut)}details.tn>.tl .fold::before{content:"▸"}details.tn[open]>.tl .fold::before{content:"▾"}
+.fn{font-family:ui-monospace,monospace;font-size:13px;font-weight:600}
+.tk{border-left:1px dashed var(--line);margin-left:13px}
+.leaf{padding:3px 8px 3px 22px;font-size:13px;color:var(--mut)}
+.tb{font-size:11px;font-weight:600;border-radius:99px;padding:1px 8px;white-space:nowrap}
+.tb-on{background:var(--on-soft);color:var(--on)}.tb-acc{background:var(--acc-soft);color:var(--acc)}.tb-man{background:var(--man-soft);color:var(--man)}.tb-mut{background:var(--bg);color:var(--mut);border:1px solid var(--line)}
+@media(max-width:700px){.row{grid-template-columns:1fr;gap:6px}.mini{display:none}nav{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>Claude Manager<span id="mode"></span></h1>
+    <nav id="tabs"></nav>
+  </div>
+  <div class="tools" id="tools">
+    <input type="search" id="q" placeholder="Cerca per nome, descrizione, percorso…" aria-label="Cerca">
+    <span id="chips"></span>
+  </div>
+</header>
+<main id="main"></main>
+<div class="toast" id="toast"></div>
+<script>
+let D=/*DATA*/null;const LIVE=location.protocol.startsWith("http");
+const TABS=[["plan","Mappa"],["tree","Albero"],["map","Panoramica"],["skills","Skill"],["plugins","Plugin"],["mcp","MCP"],["hooks","Hook"],["mem","CLAUDE.md"]];
+let tab="plan",stateFilter="all";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id);
+const norm=s=>s==="on"?"on":s==="off"?"off":"man";
+const LAB={on:"Attiva",man:"Solo manuale",off:"Spenta"};
+const VAL={on:"on",man:"user-invocable-only",off:"off"};
+const q=()=>$("q").value.toLowerCase();
+const groupBy=(a,f)=>{const m={};a.forEach(x=>(m[f(x)]??=[]).push(x));return m};
+const toast=t=>{const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)};
+
+function mini(items){const t=items.length||1,c={on:0,man:0,off:0};items.forEach(x=>c[norm(x.state)]++);
+  return `<span class="mini" title="${c.on} attive · ${c.man} solo manuali · ${c.off} spente"><i style="width:${c.on/t*100}%;background:var(--on)"></i><i style="width:${c.man/t*100}%;background:var(--man)"></i><i style="width:${c.off/t*100}%;background:var(--off)"></i></span>`}
+function seg(x){const cur=norm(x.state),key=x.name.includes(":")&&x.source==="plugin"?x.name.split(":")[1]:x.name;
+  if(!LIVE)return `<span class="pill ${cur}">${LAB[cur]}</span>`;
+  return `<span class="seg">${["on","man","off"].map(k=>`<button class="s-${k} ${cur===k?"act":""}" data-name="${esc(key)}" data-val="${VAL[k]}" onclick="setSkill(this)">${LAB[k]}</button>`).join("")}</span>`}
+const group=(title,sub,rows,items,open)=>`<details class="group" ${open?"open":""}><summary><span class="gname">${esc(title)}${sub?`<small>${esc(sub)}</small>`:""}</span>${items?mini(items):""}<span class="cnt">${rows.length}</span></summary>${rows.join("")}</details>`;
+
+function renderMap(){
+  const S=D.skills,c={on:0,man:0,off:0};S.forEach(x=>c[norm(x.state)]++);
+  const bySrc=groupBy(S,x=>x.group);
+  let h=`<div class="cards">
+   <button class="card" onclick="go('skills')"><div class="big">${S.length}</div><div class="lab">Skill</div><div class="sub">${c.on} attive · ${c.man} manuali · ${c.off} spente</div></button>
+   <button class="card" onclick="go('plugins')"><div class="big">${D.plugins.length}</div><div class="lab">Plugin</div><div class="sub">${D.plugins.filter(p=>p.enabled).length} abilitati</div></button>
+   <button class="card" onclick="go('mcp')"><div class="big">${D.mcp.length}</div><div class="lab">MCP server</div><div class="sub">configurati in file locali</div></button>
+   <button class="card" onclick="go('hooks')"><div class="big">${D.hooks.length}</div><div class="lab">Hook</div><div class="sub">in settings.json</div></button>
+   <button class="card" onclick="go('mem')"><div class="big">${D.memfiles.length}</div><div class="lab">CLAUDE.md / AGENTS.md</div><div class="sub">${D.memfiles.filter(m=>m.symlink).length} symlink</div></button></div>`;
+  h+=`<h2>Dove stanno le skill</h2><p class="legend"><span><i style="background:var(--on)"></i>attiva</span><span><i style="background:var(--man)"></i>solo manuale (non caricata da sola)</span><span><i style="background:var(--off)"></i>spenta</span></p><div class="group">`;
+  Object.keys(bySrc).sort((a,b)=>bySrc[b].length-bySrc[a].length).forEach(k=>{
+    h+=`<div class="row" style="cursor:pointer" onclick="focusGroup('${esc(k)}')"><div class="n">${esc(k)}</div><div>${mini(bySrc[k])}</div><div class="cnt">${bySrc[k].length}</div></div>`});
+  h+=`</div><p class="note">Una skill "solo manuale" non pesa sul contesto finché non la invochi tu con /nome. "Spenta" non è disponibile affatto.</p>`;
+  return h}
+
+function renderSkills(){
+  const f=q();let S=D.skills.filter(x=>(x.name+x.desc+x.group+x.path).toLowerCase().includes(f)&&(stateFilter==="all"||norm(x.state)===stateFilter));
+  if(!S.length)return '<div class="empty">Nessuna skill con questi filtri.</div>';
+  const g=groupBy(S,x=>x.group);
+  return Object.keys(g).sort().map(k=>group(k,"",g[k].map(x=>`<div class="row"><div class="n">${esc(x.name)}</div><div class="d">${esc(x.desc||"—")}<code>${esc(x.link||x.path)}</code></div><div>${seg(x)}</div></div>`),g[k],!!f||k===focus)).join("")}
+
+function renderPlugins(){
+  const f=q();const P=D.plugins.filter(p=>JSON.stringify(p).toLowerCase().includes(f));
+  if(!P.length)return '<div class="empty">Nessun plugin.</div>';
+  return P.map(p=>`<div class="group"><div class="row" style="grid-template-columns:1fr auto;border-top:0"><div><div class="n">${esc(p.id)} <span class="d">v${esc(p.version)}</span></div><div class="d">${p.skills.length} skill · ${p.commands.length} comandi · ${p.agents.length} agenti${p.hooks?" · hook":""}${p.mcp?" · MCP":""}</div><div style="margin-top:6px">${p.skills.map(s=>`<span class="tag">${esc(s)}</span>`).join("")}</div><code>${esc(p.path)}</code></div>
+   ${LIVE?`<label class="switch" title="Abilita/disabilita il plugin"><input type="checkbox" ${p.enabled?"checked":""} onchange="setPlugin('${esc(p.id)}',this.checked)"><span></span></label>`:`<span class="pill ${p.enabled?"on":"off"}">${p.enabled?"Abilitato":"Disabilitato"}</span>`}</div></div>`).join("")}
+
+function renderMcp(){
+  const f=q();const M=D.mcp.filter(x=>JSON.stringify(x).toLowerCase().includes(f));
+  if(!M.length)return '<div class="empty">Nessun MCP server.</div>';
+  const g=groupBy(M,x=>x.scope);
+  return Object.keys(g).map(k=>group(k,"",g[k].map(x=>`<div class="row"><div class="n">${esc(x.name)}</div><div class="d">${esc(x.type)} · <code style="display:inline">${esc(x.target)}</code><code>${esc(x.where)}</code>${x.env_keys.length?`<div>variabili: ${x.env_keys.map(e=>`<span class="tag">${esc(e)}</span>`).join("")}</div>`:""}</div><div></div></div>`),null,true)).join("")+'<p class="note">Qui compaiono solo gli MCP definiti in file locali. I connettori del tuo account claude.ai (Gmail, Drive, Notion…) non sono visibili da qui.</p>'}
+
+function renderHooks(){
+  const H=D.hooks.filter(x=>JSON.stringify(x).toLowerCase().includes(q()));
+  if(!H.length)return '<div class="empty">Nessun hook in settings.json.</div>';
+  return group("settings.json","",H.map(x=>`<div class="row"><div class="n">${esc(x.event)}</div><div class="d">matcher: ${esc(x.matcher||"tutti")}<code>${esc(x.cmd)}</code></div><div></div></div>`),null,true)}
+
+function renderMem(){
+  const M=D.memfiles.filter(x=>x.path.toLowerCase().includes(q()));
+  if(!M.length)return '<div class="empty">Nessun file.</div>';
+  const g=groupBy(M,x=>x.dir.split("/").slice(0,3).join("/"));
+  return Object.keys(g).sort().map(k=>group(k,"",g[k].map(x=>`<div class="row"><div class="n">${esc(x.file)}${x.symlink?' <span class="pill man">symlink</span>':""}</div><div class="d"><code>${esc(x.path)}</code></div><div class="d">${(x.size/1024).toFixed(1)} kB</div></div>`),null,!!q())).join("")}
+
+let focus=null,zoomL=1,selT=null,pan={x:0,y:0};
+/* ---------- MAPPA stile floorplan: nodi + collegamenti ---------- */
+function graph(){
+  const N=[],E=[];const sk=groupBy(D.skills,x=>x.group);
+  const node=(id,col,title,kind,body,meta)=>N.push({id,col,title,kind,body,meta});
+  node("settings",0,"settings.json","cfg",`<div class="kv"><span>override skill</span><b>${D.settings.overrides}</b></div><div class="kv"><span>plugin</span><b>${D.settings.plugins}</b></div><div class="kv"><span>hook</span><b>${D.settings.hooks}</b></div>`,"~/.claude/settings.json");
+  node("cjson",0,".claude.json","cfg",`<div class="kv"><span>MCP server</span><b>${D.mcp.filter(m=>m.where==="~/.claude.json"||m.scope==="progetto").length}</b></div>`,"~/.claude.json");
+  const gmem=D.memfiles.find(m=>m.path==="~/.claude/CLAUDE.md");
+  if(gmem)node("gmem",0,"CLAUDE.md globale","mem",`<div class="kv"><span>dimensione</span><b>${(gmem.size/1024).toFixed(1)} kB</b></div>`,gmem.path);
+  Object.keys(sk).sort((a,b)=>sk[b].length-sk[a].length).forEach(k=>{
+    const L=sk[k],plug=L[0].source==="plugin";
+    node("g:"+k,1,plug?k.split("@")[0]:k,plug?"plug":"skill",`${mini(L)}<div class="chips">${L.slice(0,10).map(x=>`<button class="c ${norm(x.state)}" onclick="event.stopPropagation();pick('s','${esc(x.name)}')">${esc(x.name.split(":").pop())}</button>`).join("")}${L.length>10?`<button class="c more" onclick="event.stopPropagation();focusGroup('${esc(k)}')">+${L.length-10}</button>`:""}</div>`,plug?k:L[0].path.split("/").slice(0,-1).join("/"));
+    const ov=L.filter(x=>x.state!=="on").length;
+    if(plug){const p=D.plugins.find(p=>p.id===k);E.push(["settings","g:"+k,p&&p.enabled?"abilitato":"disabilitato",p&&p.enabled?"on":"off"])}
+    else if(ov)E.push(["settings","g:"+k,ov+" override","man"]);
+  });
+  // symlink tra cartelle di skill
+  const links={};D.skills.forEach(x=>{if(!x.link)return;const tg=Object.keys(sk).find(k=>k!==x.group&&x.link.startsWith(k));const key=x.group+"→"+(tg||"altro");links[key]=(links[key]||0)+1;if(!tg){const d=x.link.split("/").slice(0,-1).join("/");links[key+"|"+d]=(links[key+"|"+d]||0)+1}});
+  Object.entries(links).forEach(([k,n])=>{if(k.includes("|"))return;const [a,b]=k.split("→");if(b!=="altro")E.push(["g:"+a,"g:"+b,n+" symlink","link"]);});
+  const ext={};D.skills.forEach(x=>{if(!x.link)return;if(Object.keys(sk).some(k=>k!==x.group&&x.link.startsWith(k)))return;const d=x.link.split("/").slice(0,-2).join("/")||x.link;(ext[d]??=[]).push(x)});
+  Object.entries(ext).forEach(([d,L])=>{node("x:"+d,2,d.split("/").pop(),"ext",`<div class="kv"><span>skill linkate</span><b>${L.length}</b></div>`,d);E.push(["g:"+L[0].group,"x:"+d,L.length+" symlink","link"])});
+  const mg=groupBy(D.mcp,x=>x.scope+" · "+x.where);
+  Object.entries(mg).forEach(([k,L])=>{node("m:"+k,2,"MCP · "+L[0].scope,"mcp",`<div class="chips">${L.map(x=>`<button class="c mcp" onclick="event.stopPropagation();pick('m','${esc(x.name+x.where)}')">${esc(x.name)}</button>`).join("")}</div>`,L[0].where);E.push([L[0].where==="~/.claude/settings.json"?"settings":"cjson","m:"+k,L.length+" server","mcp"])});
+  D.dotdirs.filter(d=>d.path!=="~/.claude"&&d.path!=="~/.agents").slice(0,12).forEach(d=>{node("d:"+d.path,3,d.path.split("/").slice(-2).join("/"),"dot",`<div class="kv"><span>skill · comandi · agenti</span><b>${d.skills} · ${d.commands} · ${d.agents}</b></div>${d.files.length?`<div class="chips">${d.files.map(f=>`<span class="c neu">${esc(f)}</span>`).join("")}</div>`:""}`,d.path)});
+  const mm=groupBy(D.memfiles.filter(m=>m.path!=="~/.claude/CLAUDE.md"),x=>x.dir.split("/").slice(0,3).join("/"));
+  Object.keys(mm).sort((a,b)=>mm[b].length-mm[a].length).slice(0,10).forEach(k=>{node("f:"+k,3,k,"mem",`<div class="kv"><span>CLAUDE.md · AGENTS.md</span><b>${mm[k].filter(x=>x.file!=="AGENTS.md").length} · ${mm[k].filter(x=>x.file==="AGENTS.md").length}</b></div><div class="kv"><span>symlink</span><b>${mm[k].filter(x=>x.symlink).length}</b></div>`,k);if(gmem)E.push(["gmem","f:"+k,"","mem"])});
+  return {N,E}}
+const COLS=["Configurazione","Dove vivono le skill","Server e destinazioni","Progetti e memoria"];
+const ICON={cfg:"⚙",skill:"◆",plug:"⬡",mcp:"⇄",dot:"▣",mem:"¶",ext:"↗"};
+function renderPlan(){
+  const {N,E}=graph();
+  const cols=COLS.map((c,i)=>`<div class="col"><div class="colh">${c}</div>${N.filter(n=>n.col===i).map(n=>`<div class="node k-${n.kind}" id="n-${btoa(unescape(encodeURIComponent(n.id))).replace(/=/g,"")}" data-id="${esc(n.id)}" onclick="${n.id.startsWith("g:")?`focusGroup('${esc(n.id.slice(2))}')`:""}"><div class="nh"><span class="ic">${ICON[n.kind]}</span><span class="nt">${esc(n.title)}</span></div><code>${esc(n.meta)}</code>${n.body}</div>`).join("")}</div>`).join("");
+  window._E=E;
+  return `<p class="legend"><span><i style="background:var(--on)"></i>attiva</span><span><i style="background:var(--man)"></i>solo manuale</span><span><i style="background:var(--off)"></i>spenta</span><span>— trascina per spostarti, rotella o +/− per lo zoom, clicca un elemento per cambiarlo</span></p>
+  <div class="planwrap" id="pw"><div class="zoom"><button onclick="zoom(.15)" aria-label="Ingrandisci">+</button><button onclick="zoom(-.15)" aria-label="Riduci">−</button><button onclick="zoomL=1;pan={x:0,y:0};applyT()" aria-label="Reimposta">⟲</button></div>
+  <div class="plan" id="plan"><svg id="edges"></svg>${cols}</div></div>
+  <div class="detail" id="detail">${detailHtml()}</div>`}
+function detailHtml(){
+  if(!selT)return '<span class="d">Clicca un elemento della mappa per vederlo e cambiarne lo stato.</span>';
+  const k=selT[0],id=selT.slice(2);
+  if(k==="s"){const x=D.skills.find(s=>s.name===id);if(!x)return"";return `<div style="flex:1;min-width:200px"><div class="n">${esc(x.name)}</div><div class="d">${esc(x.desc||"—")}</div><code>${esc(x.link||x.path)}</code></div><div>${seg(x)}</div>`}
+  if(k==="m"){const x=D.mcp.find(m=>m.name+m.where===id);return x?`<div><div class="n">${esc(x.name)} · ${esc(x.type)}</div><code>${esc(x.target)}</code><code>${esc(x.where)}</code></div>`:""}
+  return `<div><code>${esc(id)}</code></div>`}
+const nid=id=>"n-"+btoa(unescape(encodeURIComponent(id))).replace(/=/g,"");
+function drawEdges(){
+  const P=$("plan"),svg=$("edges");if(!P||!svg)return;
+  svg.setAttribute("width",P.scrollWidth);svg.setAttribute("height",P.scrollHeight);
+  const pr=P.getBoundingClientRect();
+  const C={on:"var(--on)",off:"var(--off)",man:"var(--man)",link:"var(--acc)",mcp:"var(--acc)",mem:"var(--mut)"};
+  svg.innerHTML=window._E.map(([a,b,l,k])=>{const A=document.getElementById(nid(a)),B=document.getElementById(nid(b));if(!A||!B)return"";
+    const ra=A.getBoundingClientRect(),rb=B.getBoundingClientRect();
+    const x1=(ra.right-pr.left)/zoomL,y1=(ra.top+Math.min(ra.height/2,40)-pr.top)/zoomL,x2=(rb.left-pr.left)/zoomL,y2=(rb.top+Math.min(rb.height/2,40)-pr.top)/zoomL;
+    const back=x2<x1,dx=Math.max(60,Math.abs(x2-x1)/2);
+    const d=back?`M${(ra.left-pr.left)/zoomL},${y1} C${(ra.left-pr.left)/zoomL-80},${y1} ${(rb.left-pr.left)/zoomL-80},${y2} ${x2},${y2}`:`M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`;
+    const mx=back?(ra.left-pr.left)/zoomL-70:(x1+x2)/2,my=(y1+y2)/2;
+    return `<path d="${d}" fill="none" stroke="${C[k]}" stroke-width="1.6" stroke-opacity=".7" ${k==="link"?'stroke-dasharray="5 4"':""}/><circle cx="${x2}" cy="${y2}" r="3" fill="${C[k]}"/>${l?`<g><rect x="${mx-l.length*3.4-6}" y="${my-9}" width="${l.length*6.8+12}" height="18" rx="9" fill="var(--surface)" stroke="${C[k]}" stroke-opacity=".5"/><text x="${mx}" y="${my+4}" text-anchor="middle" font-size="11" fill="var(--fg)">${esc(l)}</text></g>`:""}`}).join("")}
+function applyT(){const P=$("plan");if(P)P.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${zoomL})`}
+function zoom(d){zoomL=Math.min(2,Math.max(.35,zoomL+d));applyT()}
+function wirePlan(){const W=$("pw");if(!W)return;applyT();requestAnimationFrame(drawEdges);
+  let drag=null;W.onpointerdown=e=>{if(e.target.closest("button,.node .c"))return;drag={x:e.clientX-pan.x,y:e.clientY-pan.y};W.setPointerCapture(e.pointerId);W.style.cursor="grabbing"};
+  W.onpointermove=e=>{if(!drag)return;pan.x=e.clientX-drag.x;pan.y=e.clientY-drag.y;applyT()};
+  W.onpointerup=()=>{drag=null;W.style.cursor=""};
+  W.onwheel=e=>{e.preventDefault();zoom(e.deltaY<0?.1:-.1)}}
+/* ---------- ALBERO del filesystem ---------- */
+let TREE=null;const TOPEN=new Set(["~"]);
+function buildTree(){
+  const root={name:"~",path:"~",kids:{},items:[],cnt:{}};
+  const add=(path,type,label)=>{const parts=path.split("/");let n=root;
+    for(let i=1;i<parts.length;i++){n.cnt[type]=(n.cnt[type]||0)+1;const seg=parts[i];n=n.kids[seg]??={name:seg,path:parts.slice(0,i+1).join("/"),kids:{},items:[],cnt:{}}}
+    n.cnt[type]=(n.cnt[type]||0)+1;n.items.push({type,label})};
+  D.skills.forEach(x=>{if(x.source!=="plugin")add(x.path,"skill",x.name)});
+  D.memfiles.forEach(x=>add(x.dir,x.file==="AGENTS.md"?"agents":"claude",x.file+(x.symlink?" → symlink":"")));
+  D.dotdirs.forEach(x=>add(x.path,"dot",x.kind+` (${x.skills} skill, ${x.commands} comandi, ${x.agents} agenti)`));
+  D.mcp.forEach(x=>{if(x.where.endsWith(".mcp.json"))add(x.where.split("/").slice(0,-1).join("/"),"mcp","MCP "+x.name)});
+  D.plugins.forEach(p=>add(p.path,"plug","plugin "+p.id));
+  return root}
+const TB={skill:["skill","on"],claude:["CLAUDE.md","acc"],agents:["AGENTS.md","mut"],dot:[".claude/.agents","man"],mcp:["MCP","acc"],plug:["plugin","on"]};
+const badges=c=>Object.entries(c).map(([k,n])=>`<span class="tb tb-${TB[k][1]}">${n} ${TB[k][0]}</span>`).join("");
+function treeNode(n,f){
+  const kids=Object.values(n.kids).sort((a,b)=>a.name.localeCompare(b.name));
+  const match=!f||n.path.toLowerCase().includes(f)||n.items.some(i=>i.label.toLowerCase().includes(f));
+  const kidHtml=kids.map(k=>treeNode(k,f)).filter(Boolean);
+  if(f&&!match&&!kidHtml.length)return"";
+  const open=f?true:TOPEN.has(n.path);
+  const its=n.items.map(i=>`<div class="leaf"><span class="tb tb-${TB[i.type][1]}">${TB[i.type][0]}</span> ${esc(i.label)}</div>`).join("");
+  if(!kids.length)return `<div class="tn"><div class="tl"><span class="fold">·</span><span class="fn">${esc(n.name)}</span>${badges(n.cnt)}</div><div class="tk">${its}</div></div>`;
+  return `<details class="tn" ${open?"open":""} ontoggle="this.open?TOPEN.add('${esc(n.path)}'):TOPEN.delete('${esc(n.path)}');if(this.open&&!this.dataset.r){this.dataset.r=1}"><summary class="tl"><span class="fold"></span><span class="fn">${esc(n.name)}/</span>${badges(n.cnt)}</summary><div class="tk">${its}${open?kidHtml.join(""):kids.map(k=>`<div class="lazy" data-p="${esc(k.path)}"></div>`).join("")}</div></details>`}
+function renderTree(){TREE=buildTree();return `<p class="legend">Solo le cartelle che contengono qualcosa di Claude. I numeri sommano tutto quello che c'è sotto.</p><div class="tree" id="tree">${treeNode(TREE,q())}</div>`}
+document.addEventListener("toggle",e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement)||!d.classList.contains("tn")||!d.open)return;
+  d.querySelectorAll(":scope>.tk>.lazy").forEach(l=>{const parts=l.dataset.p.split("/");let n=TREE;for(let i=1;i<parts.length;i++)n=n.kids[parts[i]];l.outerHTML=treeNode(n,"")})},true);
+
+function go(t){tab=t;focus=null;stateFilter="all";draw()}
+function focusGroup(k){tab="skills";focus=k;stateFilter="all";draw();setTimeout(()=>document.querySelector("details[open]")?.scrollIntoView({behavior:"smooth",block:"start"}),50)}
+function draw(){
+  $("mode").textContent=LIVE?"gestione attiva":"sola lettura";
+  $("tabs").innerHTML=TABS.map(([k,l])=>{const n={skills:D.skills.length,plugins:D.plugins.length,mcp:D.mcp.length,hooks:D.hooks.length,mem:D.memfiles.length}[k];return `<button class="${k===tab?"act":""}" onclick="go('${k}')">${l}${n!=null?`<b>${n}</b>`:""}</button>`}).join("");
+  $("tools").style.display=(tab==="map"||tab==="plan")?"none":"flex";if(tab==="tree")$("chips").innerHTML="";
+  $("chips").innerHTML=tab==="skills"?[["all","Tutte"],["on","Attive"],["man","Solo manuali"],["off","Spente"]].map(([k,l])=>`<button class="chip ${stateFilter===k?"act":""}" onclick="stateFilter='${k}';draw()">${l}</button>`).join(" "):"";
+  $("main").innerHTML=({plan:renderPlan,tree:renderTree,map:renderMap,skills:renderSkills,plugins:renderPlugins,mcp:renderMcp,hooks:renderHooks,mem:renderMem})[tab]();
+  if(tab==="plan")wirePlan();
+}
+async function post(u,b){const r=await fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});const j=await r.json();if(!r.ok){toast(j.error||"errore");return}toast("Salvato · vale dalle nuove sessioni");await load()}
+const setSkill=el=>post("/api/skill",{name:el.dataset.name,state:el.dataset.val});
+const setPlugin=(id,enabled)=>post("/api/plugin",{id,enabled});
+async function load(){if(!LIVE)return;const open=[...document.querySelectorAll("details[open] .gname")].map(e=>e.firstChild.textContent);D=await (await fetch("/api/data")).json();draw();document.querySelectorAll("details.group").forEach(d=>{if(open.includes(d.querySelector(".gname").firstChild.textContent))d.open=true})}
+$("q").oninput=draw;
+if(D)draw();if(LIVE)load();
+</script>
+</body>
+</html>
