@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "f64e9670-4670-45da-8df2-5ae73f654168",
+  "path": "deep-research",
+  "path_key": "deep-research",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "skillssh",
+    "ref": "jordan-gibbs/hyperresearch/deep-research",
+    "subpath": "skills/deep-research",
+    "branch": null
+  }
+}

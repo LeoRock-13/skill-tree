@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b08a6c13-5639-4f9d-a6c0-71dc416d5106",
+  "path": "floorplan",
+  "path_key": "floorplan",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "skillssh",
+    "ref": "haydenschmitty/floorplan/floorplan",
+    "subpath": "skills/floorplan",
+    "branch": null
+  }
+}
