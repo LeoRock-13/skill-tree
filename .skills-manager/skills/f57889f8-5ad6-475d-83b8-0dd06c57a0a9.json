@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "f57889f8-5ad6-475d-83b8-0dd06c57a0a9",
+  "path": "openspec-apply-change",
+  "path_key": "openspec-apply-change",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/Fission-AI/OpenSpec/",
+    "subpath": "skills/openspec-apply-change",
+    "branch": null
+  }
+}
