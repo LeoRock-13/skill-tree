@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "766ce6bb-69cc-45ef-8664-587ea8223ad2",
+  "path": "context7-cli",
+  "path_key": "context7-cli",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/upstash/context7",
+    "subpath": "skills/context7-cli",
+    "branch": null
+  }
+}

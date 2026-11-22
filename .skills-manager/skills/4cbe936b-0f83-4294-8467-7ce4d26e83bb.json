@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4cbe936b-0f83-4294-8467-7ce4d26e83bb",
+  "path": "find-docs",
+  "path_key": "find-docs",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/upstash/context7",
+    "subpath": "skills/find-docs",
+    "branch": null
+  }
+}

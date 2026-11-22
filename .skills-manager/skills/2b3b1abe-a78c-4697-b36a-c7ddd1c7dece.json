@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "2b3b1abe-a78c-4697-b36a-c7ddd1c7dece",
+  "path": "context7-mcp",
+  "path_key": "context7-mcp",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/upstash/context7",
+    "subpath": "skills/context7-mcp",
+    "branch": null
+  }
+}
