@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "253b772d-0194-4ee1-b7d5-fe09cdfbedd7",
+  "path": "supabase-postgres-best-practices",
+  "path_key": "supabase-postgres-best-practices",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "skillssh",
+    "ref": "supabase/agent-skills/supabase-postgres-best-practices",
+    "subpath": "skills/supabase-postgres-best-practices",
+    "branch": null
+  }
+}
