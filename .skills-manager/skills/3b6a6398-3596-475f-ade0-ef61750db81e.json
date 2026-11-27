@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "3b6a6398-3596-475f-ade0-ef61750db81e",
+  "path": "cookie-debugging",
+  "path_key": "cookie-debugging",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "subpath": "skills/cookie-debugging",
+    "branch": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6a843473-7c1c-46b2-8874-ba705afbed38",
+  "path": "inspect-in-devtools",
+  "path_key": "inspect-in-devtools",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "subpath": "skills/inspect-in-devtools",
+    "branch": null
+  }
+}

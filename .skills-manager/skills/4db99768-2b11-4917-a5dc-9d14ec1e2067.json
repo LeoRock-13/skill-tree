@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4db99768-2b11-4917-a5dc-9d14ec1e2067",
+  "path": "chrome-devtools-cli",
+  "path_key": "chrome-devtools-cli",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "subpath": "skills/chrome-devtools-cli",
+    "branch": null
+  }
+}

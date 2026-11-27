@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "e977c8c3-deb2-4119-9082-022ee431fffb",
+  "path": "a11y-debugging",
+  "path_key": "a11y-debugging",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "subpath": "skills/a11y-debugging",
+    "branch": null
+  }
+}

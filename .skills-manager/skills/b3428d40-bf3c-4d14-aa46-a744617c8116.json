@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b3428d40-bf3c-4d14-aa46-a744617c8116",
+  "path": "memory-leak-debugging",
+  "path_key": "memory-leak-debugging",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "subpath": "skills/memory-leak-debugging",
+    "branch": null
+  }
+}
